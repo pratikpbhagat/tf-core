@@ -34,3 +34,6 @@ test-results/
 *.log
 npm-debug.log*
 pnpm-debug.log*
+
+# point-in-time audit reports
+security-audit-*.md

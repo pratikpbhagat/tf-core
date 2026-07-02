@@ -17,7 +17,6 @@ export function DownloadCenter({ items }: { items: DownloadItem[] }) {
         <li key={item.label}>
           <a
             href={item.signedUrl}
-            target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
           >

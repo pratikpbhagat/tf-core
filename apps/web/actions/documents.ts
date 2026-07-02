@@ -9,6 +9,12 @@ import { createClient } from "@/lib/supabase/server";
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
+// Filing documents are scans/exports of tax paperwork (Form 16, bank
+// statements, computation sheets, ITR-V) — never a reason to accept HTML/SVG/
+// executables. Enforced again at the bucket level (see the documents.sql
+// migration) so this holds even if a future call site skips this action.
+const ALLOWED_MIME_TYPES = new Set(["application/pdf", "image/jpeg", "image/png"]);
+
 const UploadDocumentSchema = z.object({
   filingId: z.string().uuid(),
   documentType: z.string().min(1),
@@ -32,6 +38,9 @@ export async function uploadDocument(_state: UploadDocumentState, formData: Form
   }
   if (file.size > MAX_FILE_SIZE_BYTES) {
     return { message: "File must be under 10MB." };
+  }
+  if (!ALLOWED_MIME_TYPES.has(file.type)) {
+    return { message: "Only PDF, JPEG, and PNG files are accepted." };
   }
 
   const { filingId, documentType } = validated.data;

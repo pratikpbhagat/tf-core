@@ -15,7 +15,14 @@ export function UploadDocumentForm({ filingId, documentType }: { filingId: strin
     <form action={action} className="flex flex-wrap items-center gap-2">
       <input type="hidden" name="filingId" value={filingId} />
       <input type="hidden" name="documentType" value={documentType} />
-      <input type="file" name="file" aria-label="Choose file to upload" required className="text-xs" />
+      <input
+        type="file"
+        name="file"
+        accept="application/pdf,image/jpeg,image/png"
+        aria-label="Choose file to upload"
+        required
+        className="text-xs"
+      />
       <Button type="submit" variant="outline" size="sm" disabled={pending} className="h-9 text-xs">
         <UploadSimple weight="bold" className="h-3.5 w-3.5" />
         {pending ? "Uploading..." : "Upload"}

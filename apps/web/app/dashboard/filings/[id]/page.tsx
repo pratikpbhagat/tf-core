@@ -74,7 +74,7 @@ export default async function ClientFilingDetailPage({ params }: Props) {
   const downloadItems = await Promise.all(
     outputDocuments.map(async ({ label, filePath }) => ({
       label,
-      signedUrl: filePath ? await getSignedDocumentUrl(supabase, filePath) : null,
+      signedUrl: filePath ? await getSignedDocumentUrl(supabase, filePath, 600, { download: label }) : null,
     })),
   );
 

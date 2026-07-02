@@ -1,0 +1,58 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: staging-deploy
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    name: DB Migrations (Staging)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Push migrations to staging
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          cd packages/db
+          supabase link --project-ref ${{ secrets.STAGING_SUPABASE_PROJECT_REF }}
+          supabase db push --linked
+          echo "✓ Migrations applied to staging"
+
+  deploy-vercel:
+    name: Vercel Staging Deploy
+    runs-on: ubuntu-latest
+    needs: [migrate]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to staging
+        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+  notify:
+    name: Notify
+    runs-on: ubuntu-latest
+    needs: [deploy-vercel]
+    if: always()
+    steps:
+      - name: Deployment summary
+        run: |
+          echo "## Staging Deployment"
+          echo "Commit:  ${{ github.sha }}"
+          echo "Vercel:  ${{ needs.deploy-vercel.result }}"
