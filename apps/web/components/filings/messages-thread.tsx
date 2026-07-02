@@ -9,7 +9,7 @@ type MessageEntry = {
 
 export function MessagesThread({ messages }: { messages: MessageEntry[] }) {
   if (messages.length === 0) {
-    return <p className="text-sm text-zinc-500">No messages yet.</p>;
+    return <p className="text-sm text-muted-foreground">No messages yet.</p>;
   }
 
   return (
@@ -17,20 +17,20 @@ export function MessagesThread({ messages }: { messages: MessageEntry[] }) {
       {messages.map((entry) => (
         <div
           key={entry.id}
-          className={`max-w-[85%] rounded-md border px-3 py-2 text-sm ${
+          className={`flex max-w-[85%] flex-col gap-1 rounded-md border px-3 py-2 text-sm ${
             entry.isInternal
               ? "self-start border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950"
               : entry.isOwn
-                ? "self-end border-zinc-300 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900"
-                : "self-start border-zinc-200 dark:border-zinc-800"
+                ? "self-end border-primary/30 bg-primary/5"
+                : "self-start border-border bg-card"
           }`}
         >
-          <p className="mb-1 text-xs font-medium text-zinc-500">
+          <p className="text-xs font-medium text-muted-foreground">
             {entry.isOwn ? "You" : entry.senderName}
             {entry.isInternal && " · Internal note"}
           </p>
           <p>{entry.message}</p>
-          <p className="mt-1 text-[10px] text-zinc-400">
+          <p className="text-[10px] text-muted-foreground">
             {new Date(entry.created_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
           </p>
         </div>

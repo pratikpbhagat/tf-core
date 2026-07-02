@@ -3,10 +3,11 @@
 import { useActionState } from "react";
 
 import { upsertFilingDeadline, type UpsertDeadlineState } from "@/actions/services";
+import { Button } from "@/components/ui/button";
+import { Input, Select } from "@/components/ui/input";
 
 const initialState: UpsertDeadlineState = undefined;
-
-const inputClass = "rounded-md border border-zinc-300 px-2 py-1 text-xs dark:border-zinc-700 dark:bg-zinc-900";
+const inputClass = "h-9 text-xs";
 
 export type DeadlineFormValues = {
   id?: string;
@@ -24,14 +25,14 @@ export function DeadlineForm({ defaultValues }: { defaultValues: DeadlineFormVal
   const instanceKey = defaultValues.id ?? "new";
 
   return (
-    <form action={action} className="flex flex-wrap items-end gap-2 rounded-md border border-zinc-200 p-3 dark:border-zinc-800">
+    <form action={action} className="flex flex-wrap items-end gap-2 rounded-md border border-border bg-card p-3">
       {defaultValues.id && <input type="hidden" name="id" value={defaultValues.id} />}
 
       <div className="flex flex-col gap-1">
-        <label htmlFor={`assessmentYear-${instanceKey}`} className="text-[10px] text-zinc-500">
+        <label htmlFor={`assessmentYear-${instanceKey}`} className="text-[10px] text-muted-foreground">
           Assessment year
         </label>
-        <input
+        <Input
           id={`assessmentYear-${instanceKey}`}
           name="assessmentYear"
           defaultValue={defaultValues.assessmentYear}
@@ -42,10 +43,10 @@ export function DeadlineForm({ defaultValues }: { defaultValues: DeadlineFormVal
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor={`filerCategory-${instanceKey}`} className="text-[10px] text-zinc-500">
+        <label htmlFor={`filerCategory-${instanceKey}`} className="text-[10px] text-muted-foreground">
           Filer category
         </label>
-        <select
+        <Select
           id={`filerCategory-${instanceKey}`}
           name="filerCategory"
           defaultValue={defaultValues.filerCategory}
@@ -54,14 +55,14 @@ export function DeadlineForm({ defaultValues }: { defaultValues: DeadlineFormVal
           <option value="individual">Individual</option>
           <option value="audit">Audit</option>
           <option value="transfer_pricing">Transfer pricing</option>
-        </select>
+        </Select>
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor={`dueDate-${instanceKey}`} className="text-[10px] text-zinc-500">
+        <label htmlFor={`dueDate-${instanceKey}`} className="text-[10px] text-muted-foreground">
           Due date
         </label>
-        <input
+        <Input
           id={`dueDate-${instanceKey}`}
           type="date"
           name="dueDate"
@@ -71,16 +72,16 @@ export function DeadlineForm({ defaultValues }: { defaultValues: DeadlineFormVal
         />
       </div>
 
-      <label className="flex items-center gap-1 text-[10px] text-zinc-500">
-        <input type="checkbox" name="isExtended" defaultChecked={defaultValues.isExtended} />
+      <label className="flex items-center gap-1 text-[10px] text-muted-foreground">
+        <input type="checkbox" name="isExtended" defaultChecked={defaultValues.isExtended} className="accent-primary" />
         Extended
       </label>
 
       <div className="flex flex-1 flex-col gap-1">
-        <label htmlFor={`sourceNotificationRef-${instanceKey}`} className="text-[10px] text-zinc-500">
+        <label htmlFor={`sourceNotificationRef-${instanceKey}`} className="text-[10px] text-muted-foreground">
           Source notification ref
         </label>
-        <input
+        <Input
           id={`sourceNotificationRef-${instanceKey}`}
           name="sourceNotificationRef"
           defaultValue={defaultValues.sourceNotificationRef}
@@ -88,14 +89,10 @@ export function DeadlineForm({ defaultValues }: { defaultValues: DeadlineFormVal
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="rounded-md bg-foreground px-3 py-1 text-xs font-medium text-background disabled:opacity-60"
-      >
+      <Button type="submit" variant="outline" size="sm" disabled={pending} className="h-9 text-xs">
         {pending ? "Saving..." : defaultValues.id ? "Save" : "Add"}
-      </button>
-      {state?.message && <span className="w-full text-xs text-red-600">{state.message}</span>}
+      </Button>
+      {state?.message && <span className="w-full text-xs text-destructive">{state.message}</span>}
     </form>
   );
 }

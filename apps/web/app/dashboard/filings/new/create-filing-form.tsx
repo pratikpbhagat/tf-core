@@ -3,6 +3,8 @@
 import { useActionState } from "react";
 
 import { createFiling, type CreateFilingState } from "@/actions/filings";
+import { Button } from "@/components/ui/button";
+import { FieldError } from "@/components/ui/input";
 
 const initialState: CreateFilingState = undefined;
 
@@ -13,14 +15,10 @@ export function CreateFilingForm({ serviceId, assessmentYear }: { serviceId: str
     <form action={action} className="flex flex-col gap-4">
       <input type="hidden" name="serviceId" value={serviceId} />
       <input type="hidden" name="assessmentYear" value={assessmentYear} />
-      {state?.message && <p className="text-sm text-red-600">{state.message}</p>}
-      <button
-        type="submit"
-        disabled={pending}
-        className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-60"
-      >
+      <FieldError>{state?.message}</FieldError>
+      <Button type="submit" disabled={pending}>
         {pending ? "Starting..." : "Confirm & start filing"}
-      </button>
+      </Button>
     </form>
   );
 }

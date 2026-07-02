@@ -1,7 +1,11 @@
 "use client";
 
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+
+import { cardVariants } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 type Service = { slug: string; name: string; category: string; description: string; price_display: string };
 
@@ -39,22 +43,23 @@ export function ServiceSearch({ services }: { services: Service[] }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
+      <div className="relative max-w-sm">
         <label htmlFor="service-search" className="sr-only">
           Search services
         </label>
-        <input
+        <MagnifyingGlass weight="bold" className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
           id="service-search"
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search services (e.g. capital gains, GST)..."
-          className="w-full max-w-sm rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+          className="pl-9"
         />
       </div>
 
       {Object.keys(grouped).length === 0 && (
-        <p className="text-sm text-zinc-500">No services match &quot;{query}&quot;.</p>
+        <p className="text-sm text-muted-foreground">No services match &quot;{query}&quot;.</p>
       )}
 
       {Object.entries(grouped).map(([category, items]) => (
@@ -62,14 +67,10 @@ export function ServiceSearch({ services }: { services: Service[] }) {
           <h2 className="mb-4 text-lg font-medium">{CATEGORY_LABELS[category] ?? category}</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             {items.map((service) => (
-              <Link
-                key={service.slug}
-                href={`/services/${service.slug}`}
-                className="flex flex-col gap-1 rounded-lg border border-zinc-200 p-5 hover:border-zinc-400 dark:border-zinc-800"
-              >
+              <Link key={service.slug} href={`/services/${service.slug}`} className={cardVariants({ interactive: true, className: "flex flex-col gap-1 p-5" })}>
                 <h3 className="font-medium">{service.name}</h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">{service.description}</p>
-                <p className="mt-2 text-sm font-medium">{service.price_display}</p>
+                <p className="text-sm text-muted-foreground">{service.description}</p>
+                <p className="mt-2 text-sm font-medium text-primary">{service.price_display}</p>
               </Link>
             ))}
           </div>

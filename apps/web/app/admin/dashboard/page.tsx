@@ -1,16 +1,19 @@
 import { createHash } from "node:crypto";
 
+import { CaretRight, FunnelSimple, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 import type { FilingStatus } from "@tf-core/db";
 import Link from "next/link";
 
+import { StatusBadge } from "@/components/filings/status-badge";
+import { Button } from "@/components/ui/button";
+import { cardVariants } from "@/components/ui/card";
+import { Input, Select } from "@/components/ui/input";
 import { FILING_STATUS_LABELS, FILING_STATUS_VALUES } from "@/lib/filings/status";
 import { createClient } from "@/lib/supabase/server";
 
 type Props = {
   searchParams: Promise<{ status?: string; service?: string; preparer?: string; ay?: string; q?: string; pan?: string }>;
 };
-
-const selectClass = "rounded-md border border-zinc-300 px-2 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-900";
 
 function isFilingStatus(value: string): value is FilingStatus {
   return (FILING_STATUS_VALUES as readonly string[]).includes(value);
@@ -76,83 +79,90 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
     <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-12">
       <h1 className="text-2xl font-semibold">Firm-wide filings</h1>
 
-      <form className="flex flex-wrap items-center gap-3" method="get">
-        <input
-          type="text"
-          name="q"
-          aria-label="Search by client name or tracking code"
-          defaultValue={q ?? ""}
-          placeholder="Client name or tracking code"
-          className={`${selectClass} w-56`}
-        />
-        <input
+      <form className={cardVariants({ className: "flex flex-wrap items-center gap-3 p-4" })} method="get">
+        <div className="relative">
+          <MagnifyingGlass weight="bold" className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="text"
+            name="q"
+            aria-label="Search by client name or tracking code"
+            defaultValue={q ?? ""}
+            placeholder="Client name or tracking code"
+            className="h-9 w-56 pl-9"
+          />
+        </div>
+        <Input
           type="text"
           name="pan"
           aria-label="Search by exact PAN"
           defaultValue={pan ?? ""}
           placeholder="PAN (exact)"
-          className={`${selectClass} w-32`}
+          className="h-9 w-32"
         />
-        <select name="status" aria-label="Filter by status" defaultValue={status ?? ""} className={selectClass}>
+        <Select name="status" aria-label="Filter by status" defaultValue={status ?? ""} className="h-9">
           <option value="">All statuses</option>
           {FILING_STATUS_VALUES.map((value) => (
             <option key={value} value={value}>
               {FILING_STATUS_LABELS[value]}
             </option>
           ))}
-        </select>
-        <select name="service" aria-label="Filter by service" defaultValue={serviceId ?? ""} className={selectClass}>
+        </Select>
+        <Select name="service" aria-label="Filter by service" defaultValue={serviceId ?? ""} className="h-9">
           <option value="">All services</option>
           {(services ?? []).map((service) => (
             <option key={service.id} value={service.id}>
               {service.name}
             </option>
           ))}
-        </select>
-        <select name="preparer" aria-label="Filter by preparer" defaultValue={preparerId ?? ""} className={selectClass}>
+        </Select>
+        <Select name="preparer" aria-label="Filter by preparer" defaultValue={preparerId ?? ""} className="h-9">
           <option value="">All preparers</option>
           {(preparers ?? []).map((preparer) => (
             <option key={preparer.id} value={preparer.id}>
               {preparer.name}
             </option>
           ))}
-        </select>
-        <select name="ay" aria-label="Filter by assessment year" defaultValue={ay ?? ""} className={selectClass}>
+        </Select>
+        <Select name="ay" aria-label="Filter by assessment year" defaultValue={ay ?? ""} className="h-9">
           <option value="">All years</option>
           {assessmentYears.map((year) => (
             <option key={year} value={year}>
               {year}
             </option>
           ))}
-        </select>
-        <button type="submit" className="rounded-md bg-foreground px-3 py-1.5 text-sm font-medium text-background">
+        </Select>
+        <Button type="submit" size="sm">
+          <FunnelSimple weight="bold" className="h-4 w-4" />
           Filter
-        </button>
-        <Link href="/admin/dashboard" className="text-xs font-medium underline">
+        </Button>
+        <Link href="/admin/dashboard" className="text-xs font-medium text-muted-foreground hover:text-primary hover:underline">
           Clear
         </Link>
       </form>
 
-      {panNoMatch && <p className="text-sm text-amber-600">No client found with that PAN.</p>}
+      {panNoMatch && <p className="text-sm text-amber-600 dark:text-amber-400">No client found with that PAN.</p>}
 
       <div className="flex flex-col gap-2">
-        {filings.length === 0 && !panNoMatch && <p className="text-sm text-zinc-500">No filings match these filters.</p>}
+        {filings.length === 0 && !panNoMatch && <p className="text-sm text-muted-foreground">No filings match these filters.</p>}
         {filings.map((filing) => (
           <Link
             key={filing.id}
             href={`/admin/filings/${filing.id}`}
-            className="flex items-center justify-between rounded-md border border-zinc-200 p-3 hover:border-zinc-400 dark:border-zinc-800"
+            className={cardVariants({ interactive: true, className: "flex items-center justify-between gap-3 p-3" })}
           >
             <div>
               <p className="text-sm font-medium">{serviceNameById.get(filing.service_id) ?? "Filing"}</p>
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-muted-foreground">
                 {filing.tracking_code} — {clientNameById.get(filing.client_id) ?? "Unknown client"} — AY{" "}
                 {filing.assessment_year}
               </p>
             </div>
-            <div className="text-right text-xs text-zinc-500">
-              <p>{FILING_STATUS_LABELS[filing.status] ?? filing.status}</p>
-              <p>{filing.assigned_preparer_id ? (preparerNameById.get(filing.assigned_preparer_id) ?? "—") : "Unassigned"}</p>
+            <div className="flex items-center gap-3">
+              <div className="flex flex-col items-end gap-1 text-xs text-muted-foreground">
+                <StatusBadge status={filing.status} />
+                <p>{filing.assigned_preparer_id ? (preparerNameById.get(filing.assigned_preparer_id) ?? "—") : "Unassigned"}</p>
+              </div>
+              <CaretRight weight="bold" className="h-4 w-4 flex-none text-muted-foreground" />
             </div>
           </Link>
         ))}

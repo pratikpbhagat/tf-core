@@ -1,7 +1,9 @@
+import { CalendarBlank, Check, CurrencyInr } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { IllustrativeDisclaimer } from "@/components/disclaimer";
+import { buttonVariants } from "@/components/ui/button";
 import { createPublicClient } from "@/lib/supabase/public";
 
 export const revalidate = 3600;
@@ -53,14 +55,14 @@ export default async function ServiceDetailPage({ params }: Props) {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-10 px-4 py-16">
       <div>
-        <p className="text-sm font-medium tracking-wide text-zinc-500 uppercase">{service.category}</p>
+        <p className="text-sm font-medium tracking-wide text-primary uppercase">{service.category}</p>
         <h1 className="text-3xl font-semibold">{service.name}</h1>
-        <p className="mt-2 text-zinc-600 dark:text-zinc-400">{service.description}</p>
+        <p className="mt-2 text-muted-foreground">{service.description}</p>
       </div>
 
       <section>
         <h2 className="mb-2 text-lg font-medium">Eligibility</h2>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">{service.eligibility_criteria}</p>
+        <p className="text-sm text-muted-foreground">{service.eligibility_criteria}</p>
       </section>
 
       <section>
@@ -69,10 +71,13 @@ export default async function ServiceDetailPage({ params }: Props) {
           {requiredDocuments.map((doc) => (
             <li
               key={doc.document_type}
-              className="flex items-center justify-between rounded-md border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-800"
+              className="flex items-center justify-between rounded-md border border-border bg-card px-3 py-2 text-sm"
             >
-              <span>{doc.label}</span>
-              {!doc.required && <span className="text-xs text-zinc-500">optional</span>}
+              <span className="flex items-center gap-2">
+                <Check weight="bold" className="h-4 w-4 text-accent" />
+                {doc.label}
+              </span>
+              {!doc.required && <span className="text-xs text-muted-foreground">optional</span>}
             </li>
           ))}
         </ul>
@@ -81,7 +86,8 @@ export default async function ServiceDetailPage({ params }: Props) {
       {deadline && (
         <section>
           <h2 className="mb-2 text-lg font-medium">Deadline</h2>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="flex items-center gap-2 text-sm text-muted-foreground">
+            <CalendarBlank weight="bold" className="h-4 w-4 text-primary" />
             AY {deadline.assessment_year}: due{" "}
             {new Date(deadline.due_date).toLocaleDateString("en-IN", {
               day: "numeric",
@@ -95,7 +101,10 @@ export default async function ServiceDetailPage({ params }: Props) {
 
       <section>
         <h2 className="mb-2 text-lg font-medium">Pricing</h2>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">{service.price_display}</p>
+        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+          <CurrencyInr weight="bold" className="h-4 w-4 text-primary" />
+          {service.price_display}
+        </p>
       </section>
 
       {faq.length > 0 && (
@@ -105,7 +114,7 @@ export default async function ServiceDetailPage({ params }: Props) {
             {faq.map((entry) => (
               <div key={entry.question}>
                 <p className="font-medium">{entry.question}</p>
-                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{entry.answer}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{entry.answer}</p>
               </div>
             ))}
           </div>
@@ -115,10 +124,7 @@ export default async function ServiceDetailPage({ params }: Props) {
       <IllustrativeDisclaimer />
 
       <div>
-        <Link
-          href={`/dashboard/filings/new?service=${service.slug}`}
-          className="rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background"
-        >
+        <Link href={`/dashboard/filings/new?service=${service.slug}`} className={buttonVariants({ size: "md" })}>
           Start this filing
         </Link>
       </div>

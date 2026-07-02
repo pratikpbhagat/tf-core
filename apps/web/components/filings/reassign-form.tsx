@@ -3,6 +3,8 @@
 import { useActionState } from "react";
 
 import { reassignFiling, type ReassignFilingState } from "@/actions/filings";
+import { Button } from "@/components/ui/button";
+import { FieldError, Select } from "@/components/ui/input";
 
 const initialState: ReassignFilingState = undefined;
 
@@ -22,12 +24,12 @@ export function ReassignForm({
   return (
     <form action={action} className="flex items-center gap-2">
       <input type="hidden" name="filingId" value={filingId} />
-      <select
+      <Select
         key={currentPreparerId}
         name="preparerId"
         aria-label="Assign preparer"
         defaultValue={currentPreparerId ?? ""}
-        className="rounded-md border border-zinc-300 px-2 py-1 text-xs dark:border-zinc-700 dark:bg-zinc-900"
+        className="h-9 text-xs"
       >
         <option value="" disabled>
           Select preparer
@@ -37,15 +39,11 @@ export function ReassignForm({
             {preparer.name}
           </option>
         ))}
-      </select>
-      <button
-        type="submit"
-        disabled={pending}
-        className="rounded-md border border-zinc-300 px-2 py-1 text-xs font-medium disabled:opacity-60 dark:border-zinc-700"
-      >
+      </Select>
+      <Button type="submit" variant="outline" size="sm" disabled={pending} className="h-9 text-xs">
         {pending ? "Saving..." : "Reassign"}
-      </button>
-      {state?.message && <span className="text-xs text-red-600">{state.message}</span>}
+      </Button>
+      <FieldError>{state?.message}</FieldError>
     </form>
   );
 }

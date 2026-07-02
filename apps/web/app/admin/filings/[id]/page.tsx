@@ -8,13 +8,14 @@ import { MessageForm } from "@/components/filings/message-form";
 import { MessagesThread } from "@/components/filings/messages-thread";
 import { ReassignForm } from "@/components/filings/reassign-form";
 import { ReviewDocumentControls } from "@/components/filings/review-document-controls";
+import { StatusBadge } from "@/components/filings/status-badge";
 import { StatusTimeline } from "@/components/filings/status-timeline";
 import { StatusUpdateForm } from "@/components/filings/status-update-form";
 import { UploadDocumentForm } from "@/components/filings/upload-document-form";
+import { Card } from "@/components/ui/card";
 import { getSessionUser } from "@/lib/auth/dal";
 import { deriveChecklist, type RequiredDocument } from "@/lib/filings/checklist";
 import { OUTPUT_DOCUMENT_TYPES } from "@/lib/filings/output-documents";
-import { FILING_STATUS_LABELS } from "@/lib/filings/status";
 import { getSignedDocumentUrl } from "@/lib/storage/signed-url";
 import { createClient } from "@/lib/supabase/server";
 
@@ -111,25 +112,27 @@ export default async function AdminFilingDetailPage({ params }: Props) {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-4 py-12">
-      <div>
-        <p className="text-sm text-zinc-500">{filing.tracking_code}</p>
-        <h1 className="text-2xl font-semibold">{service?.name}</h1>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          {client?.name} ({client?.email}) — AY {filing.assessment_year} —{" "}
-          {FILING_STATUS_LABELS[filing.status] ?? filing.status}
-        </p>
-        <div className="mt-2 flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-          <span>PAN:</span>
-          <RevealPanButton userId={filing.client_id} maskedPan={client?.pan_masked ?? null} />
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-sm text-muted-foreground">{filing.tracking_code}</p>
+          <h1 className="text-2xl font-semibold">{service?.name}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {client?.name} ({client?.email}) — AY {filing.assessment_year}
+          </p>
+          <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+            <span>PAN:</span>
+            <RevealPanButton userId={filing.client_id} maskedPan={client?.pan_masked ?? null} />
+          </div>
         </div>
+        <StatusBadge status={filing.status} />
       </div>
 
-      <section className="flex flex-col gap-3">
+      <Card className="flex flex-col gap-3 p-5">
         <h2 className="text-lg font-medium">Assigned preparer</h2>
         <ReassignForm filingId={filing.id} currentPreparerId={filing.assigned_preparer_id} preparers={preparers ?? []} />
-      </section>
+      </Card>
 
-      <section className="flex flex-col gap-3">
+      <Card className="flex flex-col gap-3 p-5">
         <h2 className="text-lg font-medium">Computation summary</h2>
         <ComputationSummary
           regimeSelected={filing.regime_selected}
@@ -145,7 +148,7 @@ export default async function AdminFilingDetailPage({ params }: Props) {
           currentRegimeComparisonNote={filing.regime_comparison_note}
           currentEVerified={filing.e_verified}
         />
-      </section>
+      </Card>
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">Documents</h2>
@@ -161,7 +164,7 @@ export default async function AdminFilingDetailPage({ params }: Props) {
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">Output documents</h2>
         {outputDocuments.map(({ type, label }, index) => (
-          <div key={type} className="rounded-md border border-zinc-200 p-3 dark:border-zinc-800">
+          <Card key={type} className="p-3">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium">{label}</p>
               {downloadItems[index]?.signedUrl && (
@@ -169,26 +172,26 @@ export default async function AdminFilingDetailPage({ params }: Props) {
                   href={downloadItems[index].signedUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-xs font-medium underline"
+                  className="text-xs font-medium text-primary hover:underline"
                 >
                   View current file
                 </a>
               )}
             </div>
             <UploadDocumentForm filingId={filing.id} documentType={type} />
-          </div>
+          </Card>
         ))}
       </section>
 
-      <section className="flex flex-col gap-3">
+      <Card className="flex flex-col gap-3 p-5">
         <h2 className="text-lg font-medium">Downloads (client view)</h2>
         <DownloadCenter items={downloadItems} />
-      </section>
+      </Card>
 
-      <section className="flex flex-col gap-3">
+      <Card className="flex flex-col gap-3 p-5">
         <h2 className="text-lg font-medium">Status timeline</h2>
         <StatusTimeline entries={statusHistory ?? []} />
-      </section>
+      </Card>
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">Messages</h2>

@@ -1,8 +1,10 @@
+import { CaretRight, ClockCountdown, Folders } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
+import { StatusBadge } from "@/components/filings/status-badge";
+import { cardVariants } from "@/components/ui/card";
 import { getSessionUser } from "@/lib/auth/dal";
 import { formatDeadlineCountdown } from "@/lib/filings/deadline";
-import { FILING_STATUS_LABELS } from "@/lib/filings/status";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function PreparerDashboardPage() {
@@ -37,13 +39,18 @@ export default async function PreparerDashboardPage() {
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-12">
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
         <h1 className="text-2xl font-semibold">Welcome, {user.name}</h1>
-        <p className="text-sm text-zinc-500">Filings assigned to you</p>
+        <p className="text-sm text-muted-foreground">Filings assigned to you</p>
       </div>
 
       {(filings ?? []).length === 0 ? (
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          No filings assigned to you yet — an admin can assign one from the firm-wide filings list.
-        </p>
+        <div className={cardVariants({ className: "flex flex-col items-center gap-3 p-10 text-center" })}>
+          <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Folders weight="bold" className="h-6 w-6" />
+          </span>
+          <p className="text-sm text-muted-foreground">
+            No filings assigned to you yet — an admin can assign one from the firm-wide filings list.
+          </p>
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
           {(filings ?? []).map((filing) => {
@@ -58,18 +65,26 @@ export default async function PreparerDashboardPage() {
               <Link
                 key={filing.id}
                 href={`/preparer/filings/${filing.id}`}
-                className="flex items-center justify-between rounded-lg border border-zinc-200 p-4 hover:border-zinc-400 dark:border-zinc-800"
+                className={cardVariants({ interactive: true, className: "flex items-center justify-between gap-4 p-4" })}
               >
                 <div>
                   <p className="font-medium">{service?.name ?? "Filing"}</p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-muted-foreground">
                     {filing.tracking_code} — {clientNameById.get(filing.client_id) ?? "Unknown client"} — AY{" "}
                     {filing.assessment_year}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm">{FILING_STATUS_LABELS[filing.status] ?? filing.status}</p>
-                  {deadline && <p className="text-xs text-zinc-500">{formatDeadlineCountdown(deadline.due_date)}</p>}
+                <div className="flex items-center gap-3">
+                  <div className="flex flex-col items-end gap-1">
+                    <StatusBadge status={filing.status} />
+                    {deadline && (
+                      <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <ClockCountdown weight="bold" className="h-3.5 w-3.5" />
+                        {formatDeadlineCountdown(deadline.due_date)}
+                      </p>
+                    )}
+                  </div>
+                  <CaretRight weight="bold" className="h-4 w-4 flex-none text-muted-foreground" />
                 </div>
               </Link>
             );

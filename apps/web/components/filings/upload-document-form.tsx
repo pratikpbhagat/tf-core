@@ -1,8 +1,10 @@
 "use client";
 
+import { UploadSimple } from "@phosphor-icons/react/dist/ssr";
 import { useActionState } from "react";
 
 import { uploadDocument, type UploadDocumentState } from "@/actions/documents";
+import { Button } from "@/components/ui/button";
 
 const initialState: UploadDocumentState = undefined;
 
@@ -14,14 +16,11 @@ export function UploadDocumentForm({ filingId, documentType }: { filingId: strin
       <input type="hidden" name="filingId" value={filingId} />
       <input type="hidden" name="documentType" value={documentType} />
       <input type="file" name="file" aria-label="Choose file to upload" required className="text-xs" />
-      <button
-        type="submit"
-        disabled={pending}
-        className="rounded-md border border-zinc-300 px-2 py-1 text-xs font-medium disabled:opacity-60 dark:border-zinc-700"
-      >
+      <Button type="submit" variant="outline" size="sm" disabled={pending} className="h-9 text-xs">
+        <UploadSimple weight="bold" className="h-3.5 w-3.5" />
         {pending ? "Uploading..." : "Upload"}
-      </button>
-      {state?.message && <span className="text-xs text-red-600">{state.message}</span>}
+      </Button>
+      {state?.message && <span className="text-xs text-destructive">{state.message}</span>}
     </form>
   );
 }

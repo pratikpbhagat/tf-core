@@ -4,6 +4,8 @@ import type { FilingStatus } from "@tf-core/db";
 import { useActionState } from "react";
 
 import { updateFilingStatus, type UpdateFilingStatusState } from "@/actions/filings";
+import { Button } from "@/components/ui/button";
+import { FieldError, Input, Label, Select, Textarea } from "@/components/ui/input";
 import { FILING_STATUS_LABELS, FILING_STATUS_VALUES } from "@/lib/filings/status";
 
 const initialState: UpdateFilingStatusState = undefined;
@@ -34,87 +36,72 @@ export function StatusUpdateForm({
   const [state, action, pending] = useActionState(updateFilingStatus, initialState);
 
   return (
-    <form action={action} className="flex flex-col gap-3 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
+    <form action={action} className="flex flex-col gap-3 rounded-md border border-border bg-muted/40 p-4">
       <input type="hidden" name="filingId" value={filingId} />
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="status" className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
-          Status
-        </label>
-        <select
-          id="status"
-          key={currentStatus}
-          name="status"
-          defaultValue={currentStatus}
-          className="rounded-md border border-zinc-300 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
-        >
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="status">Status</Label>
+        <Select id="status" key={currentStatus} name="status" defaultValue={currentStatus}>
           {FILING_STATUS_VALUES.map((value) => (
             <option key={value} value={value}>
               {FILING_STATUS_LABELS[value]}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="taxComputed" className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
-            Tax computed (₹)
-          </label>
-          <input
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="taxComputed">Tax computed (₹)</Label>
+          <Input
             id="taxComputed"
             key={`tax-${currentTaxComputed}`}
             type="number"
             name="taxComputed"
             step="0.01"
             defaultValue={currentTaxComputed ?? ""}
-            className="rounded-md border border-zinc-300 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
           />
         </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="refundOrDemand" className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
-            Refund (+) / Demand (-) (₹)
-          </label>
-          <input
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="refundOrDemand">Refund (+) / Demand (-) (₹)</Label>
+          <Input
             id="refundOrDemand"
             key={`refund-${currentRefundOrDemand}`}
             type="number"
             name="refundOrDemand"
             step="0.01"
             defaultValue={currentRefundOrDemand ?? ""}
-            className="rounded-md border border-zinc-300 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
           />
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="regimeComparisonNote" className="text-xs font-medium text-zinc-600 dark:text-zinc-400">
-          Regime comparison note
-        </label>
-        <textarea
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="regimeComparisonNote">Regime comparison note</Label>
+        <Textarea
           id="regimeComparisonNote"
           key={`note-${currentRegimeComparisonNote}`}
           name="regimeComparisonNote"
           rows={2}
           defaultValue={currentRegimeComparisonNote ?? ""}
-          className="rounded-md border border-zinc-300 px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
         />
       </div>
 
-      <label className="flex items-center gap-2 text-xs font-medium text-zinc-600 dark:text-zinc-400">
-        <input key={`ev-${currentEVerified}`} type="checkbox" name="eVerified" defaultChecked={currentEVerified} />
+      <label className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+        <input
+          key={`ev-${currentEVerified}`}
+          type="checkbox"
+          name="eVerified"
+          defaultChecked={currentEVerified}
+          className="h-4 w-4 accent-primary"
+        />
         E-verified
       </label>
 
       <div className="flex items-center gap-2">
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background disabled:opacity-60"
-        >
+        <Button type="submit" size="sm" disabled={pending}>
           {pending ? "Saving..." : "Update filing"}
-        </button>
-        {state?.message && <span className="text-xs text-red-600">{state.message}</span>}
+        </Button>
+        <FieldError>{state?.message}</FieldError>
       </div>
     </form>
   );

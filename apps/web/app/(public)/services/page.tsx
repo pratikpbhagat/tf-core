@@ -17,7 +17,7 @@ export default async function ServicesPage() {
     <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-10 px-4 py-16">
       <div>
         <h1 className="text-3xl font-semibold">Services</h1>
-        <p className="mt-2 text-zinc-600 dark:text-zinc-400">Pick the filing that matches your situation.</p>
+        <p className="mt-2 text-muted-foreground">Pick the filing that matches your situation.</p>
       </div>
 
       <ServiceSearch services={data ?? []} />

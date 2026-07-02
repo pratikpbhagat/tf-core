@@ -54,9 +54,9 @@ export default async function NewFilingPage({ searchParams }: Props) {
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 py-16">
       <div>
         <h1 className="text-2xl font-semibold">Start your {service.name} filing</h1>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">Assessment Year {assessmentYear}</p>
+        <p className="mt-1 text-sm text-muted-foreground">Assessment Year {assessmentYear}</p>
       </div>
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="text-sm text-muted-foreground">
         We&apos;ll create the filing and take you straight to your document checklist.
       </p>
       <CreateFilingForm serviceId={service.id} assessmentYear={assessmentYear} />

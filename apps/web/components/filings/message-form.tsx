@@ -1,8 +1,11 @@
 "use client";
 
+import { PaperPlaneTilt } from "@phosphor-icons/react/dist/ssr";
 import { useActionState, useRef } from "react";
 
 import { sendMessage, type SendMessageState } from "@/actions/messages";
+import { Button } from "@/components/ui/button";
+import { FieldError, Textarea } from "@/components/ui/input";
 
 const initialState: SendMessageState = undefined;
 
@@ -23,29 +26,25 @@ export function MessageForm({ filingId, allowInternal = false }: { filingId: str
       <label htmlFor="message" className="sr-only">
         Message
       </label>
-      <textarea
+      <Textarea
         id="message"
         name="message"
         required
         rows={2}
         placeholder={allowInternal ? "Message the client, or check 'Internal note' below..." : "Message your preparer..."}
-        className="rounded-md border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
       />
       <div className="flex items-center gap-3">
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background disabled:opacity-60"
-        >
+        <Button type="submit" size="sm" disabled={pending}>
+          <PaperPlaneTilt weight="bold" className="h-4 w-4" />
           {pending ? "Sending..." : "Send"}
-        </button>
+        </Button>
         {allowInternal && (
-          <label className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
-            <input type="checkbox" name="isInternal" />
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <input type="checkbox" name="isInternal" className="accent-primary" />
             Internal note (client won&apos;t see this)
           </label>
         )}
-        {state?.message && <span className="text-xs text-red-600">{state.message}</span>}
+        <FieldError>{state?.message}</FieldError>
       </div>
     </form>
   );

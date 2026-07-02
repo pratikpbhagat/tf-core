@@ -1,4 +1,6 @@
 import { InviteStaffForm } from "@/components/admin/invite-staff-form";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { TERMINAL_FILING_STATUSES } from "@/lib/filings/status";
 import { createClient } from "@/lib/supabase/server";
 
@@ -27,20 +29,18 @@ export default async function AdminStaffPage() {
 
       <section className="flex flex-col gap-2">
         {(staff ?? []).map((member) => (
-          <div
-            key={member.id}
-            className="flex items-center justify-between rounded-md border border-zinc-200 p-3 dark:border-zinc-800"
-          >
+          <Card key={member.id} className="flex items-center justify-between p-3">
             <div>
               <p className="text-sm font-medium">{member.name}</p>
-              <p className="text-xs text-zinc-500">
-                {member.email} — {member.role}
-              </p>
+              <p className="text-xs text-muted-foreground">{member.email}</p>
             </div>
-            {member.role === "preparer" && (
-              <p className="text-sm font-medium">{workloadByPreparer.get(member.id) ?? 0} active filings</p>
-            )}
-          </div>
+            <div className="flex items-center gap-2">
+              {member.role === "preparer" && (
+                <span className="text-sm text-muted-foreground">{workloadByPreparer.get(member.id) ?? 0} active</span>
+              )}
+              <Badge tone={member.role === "admin" ? "info" : "neutral"}>{member.role}</Badge>
+            </div>
+          </Card>
         ))}
       </section>
 

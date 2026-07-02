@@ -3,11 +3,10 @@
 import { useActionState } from "react";
 
 import { upsertService, type UpsertServiceState } from "@/actions/services";
+import { Button } from "@/components/ui/button";
+import { FieldError, Input, Label, Select, Textarea } from "@/components/ui/input";
 
 const initialState: UpsertServiceState = undefined;
-
-const inputClass = "rounded-md border border-zinc-300 px-2 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-900";
-const labelClass = "text-xs font-medium text-zinc-600 dark:text-zinc-400";
 
 export type ServiceFormValues = {
   id?: string;
@@ -31,121 +30,88 @@ export function ServiceForm({ defaultValues }: { defaultValues: ServiceFormValue
       {defaultValues.id && <input type="hidden" name="id" value={defaultValues.id} />}
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="name" className={labelClass}>
-            Name
-          </label>
-          <input id="name" name="name" defaultValue={defaultValues.name} required className={inputClass} />
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="name">Name</Label>
+          <Input id="name" name="name" defaultValue={defaultValues.name} required />
         </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="slug" className={labelClass}>
-            Slug
-          </label>
-          <input id="slug" name="slug" defaultValue={defaultValues.slug} required className={inputClass} />
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="slug">Slug</Label>
+          <Input id="slug" name="slug" defaultValue={defaultValues.slug} required />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="category" className={labelClass}>
-            Category
-          </label>
-          <input id="category" name="category" defaultValue={defaultValues.category} required className={inputClass} />
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="category">Category</Label>
+          <Input id="category" name="category" defaultValue={defaultValues.category} required />
         </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="applicableDeadlineType" className={labelClass}>
-            Deadline type
-          </label>
-          <select
-            id="applicableDeadlineType"
-            name="applicableDeadlineType"
-            defaultValue={defaultValues.applicableDeadlineType}
-            className={inputClass}
-          >
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="applicableDeadlineType">Deadline type</Label>
+          <Select id="applicableDeadlineType" name="applicableDeadlineType" defaultValue={defaultValues.applicableDeadlineType}>
             <option value="individual">Individual</option>
             <option value="audit">Audit</option>
             <option value="transfer_pricing">Transfer pricing</option>
-          </select>
+          </Select>
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="description" className={labelClass}>
-          Description
-        </label>
-        <textarea
-          id="description"
-          name="description"
-          defaultValue={defaultValues.description}
-          required
-          rows={2}
-          className={inputClass}
-        />
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="description">Description</Label>
+        <Textarea id="description" name="description" defaultValue={defaultValues.description} required rows={2} />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="eligibilityCriteria" className={labelClass}>
-          Eligibility criteria
-        </label>
-        <textarea
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="eligibilityCriteria">Eligibility criteria</Label>
+        <Textarea
           id="eligibilityCriteria"
           name="eligibilityCriteria"
           defaultValue={defaultValues.eligibilityCriteria}
           required
           rows={3}
-          className={inputClass}
         />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="requiredDocumentsJson" className={labelClass}>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="requiredDocumentsJson">
           Required documents — JSON array of {"{document_type, label, required}"}
-        </label>
-        <textarea
+        </Label>
+        <Textarea
           id="requiredDocumentsJson"
           name="requiredDocumentsJson"
           defaultValue={defaultValues.requiredDocumentsJson}
           required
           rows={6}
-          className={`${inputClass} font-mono text-xs`}
+          className="font-mono text-xs"
         />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="faqJson" className={labelClass}>
-          FAQ — JSON array of {"{question, answer}"}
-        </label>
-        <textarea
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="faqJson">FAQ — JSON array of {"{question, answer}"}</Label>
+        <Textarea
           id="faqJson"
           name="faqJson"
           defaultValue={defaultValues.faqJson}
           required
           rows={5}
-          className={`${inputClass} font-mono text-xs`}
+          className="font-mono text-xs"
         />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="priceDisplay" className={labelClass}>
-          Price display
-        </label>
-        <input id="priceDisplay" name="priceDisplay" defaultValue={defaultValues.priceDisplay} required className={inputClass} />
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="priceDisplay">Price display</Label>
+        <Input id="priceDisplay" name="priceDisplay" defaultValue={defaultValues.priceDisplay} required />
       </div>
 
-      <label className="flex items-center gap-2 text-xs font-medium text-zinc-600 dark:text-zinc-400">
-        <input type="checkbox" name="isActive" defaultChecked={defaultValues.isActive} />
+      <label className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+        <input type="checkbox" name="isActive" defaultChecked={defaultValues.isActive} className="h-4 w-4 accent-primary" />
         Active (visible on public site)
       </label>
 
-      {state?.message && <p className="text-sm text-red-600">{state.message}</p>}
+      <FieldError>{state?.message}</FieldError>
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="self-start rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-60"
-      >
+      <Button type="submit" disabled={pending} className="self-start">
         {pending ? "Saving..." : "Save service"}
-      </button>
+      </Button>
     </form>
   );
 }

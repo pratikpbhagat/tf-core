@@ -5,12 +5,13 @@ import { ComputationSummary } from "@/components/filings/computation-summary";
 import { DownloadCenter } from "@/components/filings/download-center";
 import { MessageForm } from "@/components/filings/message-form";
 import { MessagesThread } from "@/components/filings/messages-thread";
+import { StatusBadge } from "@/components/filings/status-badge";
 import { StatusTimeline } from "@/components/filings/status-timeline";
 import { UploadDocumentForm } from "@/components/filings/upload-document-form";
+import { Card } from "@/components/ui/card";
 import { getSessionUser } from "@/lib/auth/dal";
 import { deriveChecklist, type RequiredDocument } from "@/lib/filings/checklist";
 import { OUTPUT_DOCUMENT_TYPES } from "@/lib/filings/output-documents";
-import { FILING_STATUS_LABELS } from "@/lib/filings/status";
 import { getSignedDocumentUrl } from "@/lib/storage/signed-url";
 import { createClient } from "@/lib/supabase/server";
 
@@ -106,15 +107,16 @@ export default async function ClientFilingDetailPage({ params }: Props) {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-4 py-12">
-      <div>
-        <p className="text-sm text-zinc-500">{filing.tracking_code}</p>
-        <h1 className="text-2xl font-semibold">{service?.name}</h1>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          AY {filing.assessment_year} — {FILING_STATUS_LABELS[filing.status] ?? filing.status}
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-sm text-muted-foreground">{filing.tracking_code}</p>
+          <h1 className="text-2xl font-semibold">{service?.name}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">AY {filing.assessment_year}</p>
+        </div>
+        <StatusBadge status={filing.status} />
       </div>
 
-      <section className="flex flex-col gap-3">
+      <Card className="flex flex-col gap-3 p-5">
         <h2 className="text-lg font-medium">Computation summary</h2>
         <ComputationSummary
           regimeSelected={filing.regime_selected}
@@ -123,7 +125,7 @@ export default async function ClientFilingDetailPage({ params }: Props) {
           refundOrDemand={filing.refund_or_demand}
           regimeControls={<RegimeForm filingId={filing.id} currentRegime={filing.regime_selected} />}
         />
-      </section>
+      </Card>
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">Documents</h2>
@@ -134,15 +136,15 @@ export default async function ClientFilingDetailPage({ params }: Props) {
         ))}
       </section>
 
-      <section className="flex flex-col gap-3">
+      <Card className="flex flex-col gap-3 p-5">
         <h2 className="text-lg font-medium">Downloads</h2>
         <DownloadCenter items={downloadItems} />
-      </section>
+      </Card>
 
-      <section className="flex flex-col gap-3">
+      <Card className="flex flex-col gap-3 p-5">
         <h2 className="text-lg font-medium">Status timeline</h2>
         <StatusTimeline entries={statusHistory ?? []} />
-      </section>
+      </Card>
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">Messages</h2>

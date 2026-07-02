@@ -20,7 +20,7 @@ export default async function AdminDeadlinesPage() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-12">
       <h1 className="text-2xl font-semibold">Filing deadlines</h1>
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="text-sm text-muted-foreground">
         Deadlines are data, not code — updating them here takes effect on the public service pages and the
         deadline-risk view immediately, no deploy required.
       </p>
