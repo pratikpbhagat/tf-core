@@ -1,0 +1,23 @@
+{
+  "name": "tf-core",
+  "private": true,
+  "packageManager": "pnpm@10.12.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "turbo run dev --filter=@tf-core/web",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:e2e": "pnpm --filter @tf-core/web test:e2e",
+    "db:gen-types": "pnpm --filter @tf-core/db gen:types",
+    "db:reset": "pnpm --filter @tf-core/db reset",
+    "db:start": "pnpm --filter @tf-core/db start",
+    "db:stop": "pnpm --filter @tf-core/db stop"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0"
+  }
+}

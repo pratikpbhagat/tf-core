@@ -1,0 +1,14 @@
+{
+  "name": "@tf-core/config",
+  "private": true,
+  "version": "0.0.0",
+  "main": "eslint-preset.js",
+  "files": [
+    "tsconfig.base.json",
+    "eslint-preset.js"
+  ],
+  "dependencies": {
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0"
+  }
+}
